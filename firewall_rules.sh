@@ -12,7 +12,7 @@ sudo iptables -A OUTPUT -o lo -j ACCEPT
 # Permite o tráfego de resposta relacionado e estabelecido
 sudo iptables -A INPUT -m state --state RELATED,ESTABLISHED -j ACCEPT
 
-# Bloqueia o acesso a um site específico (substitua 'exemplo.com' pelo site desejado)
+# Bloqueia o acesso a um site específico
 sudo iptables -A OUTPUT -p tcp -m string --string "Host: globo.com" --algo kmp --to 65535 -j DROP
 
 # Exibe as regras iptables

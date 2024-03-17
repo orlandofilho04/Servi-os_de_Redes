@@ -1,59 +1,56 @@
-## Projeto 01 - Projeto de Administração de Redes usando Vagrant com 3 VMs
+## Atividade 01 - 2024/01 - Exercício de Configuração de Rede em Docker
 
-Você é responsável por configurar um ambiente de laboratório de administração de redes com 3 máquinas virtuais (VMs) usando o Vagrant. Este ambiente de laboratório será usado para fins educacionais e de treinamento em administração de redes.
+Você foi designado para configurar um ambiente de rede em Docker para uma empresa fictícia. Este ambiente deve incluir serviços essenciais de rede, como DHCP, DNS e Firewall, para garantir conectividade e segurança adequadas. Você deve configurar cada serviço em um container Docker separado e garantir que eles se comuniquem adequadamente entre si. Além disso, é necessário criar Dockerfiles para cada imagem necessária, com base na imagem ubuntu:latest, e realizar testes para validar a configuração da rede.
 
 ## Estrutura do Projeto
 
-- shared_folder
-- vagrantfile
+- dockerfile.dhcp
+- dockerfile.dns
+- dockerfile.firewall
+- dhcpd.conf (arquivo de configuração necessário para DHCP)
+- firewall_rules.sh (arquivo de configuração necessário para FIREWALL)
+- named.conf.options (arquivo de configuração necessário para DNS)
 - README.md
 
 ## Pré-requisitos
 
-- Considerar sistema de criação Linux Mint 21.2
-- Vagrant 2.2.19
-- VirtualBox 6.1
-- Imagem ISO do Ubuntu Server 20.04 LTS já na pasta "/root/.vagrant.d/boxes"
+- Considerar sistema de criação (HOST) Linux Mint 21.3
+- Docker 24.0.5
 
 ## Instruções de Uso
 
 1. Clone o repositório do Github.
-2. Acesse-o pelo terminal a pasta onde o projeto foi clonado e execute o comando "vagrant up" para iniciar a criação das VMs.
-3. Verifique os status de cada VM com o comando "vagrant status" e veja se estão criadas ou não.
-4. Após verificar os status de cada VM, digite "vagrant ssh" junto com o nome da VM (gateway-vm, sevidor-web-vm ou servidor-bd-vm) para iniciar o shell de cada uma.
-5. Por fim, desligue as VMs digitando o comando "vagrant halt", e caso queira apaga-las, digite o comando "vagrant destroy".
+2. Acesse-o pelo terminal a pasta onde o projeto foi clonado.
+3. Execute o comando "sudo docker build -t orlandofilho04/dhcp:latest -f dockerfile.dhcp ." para iniciar a criação do container DHCP.
+4. Execute o comando "sudo docker build -t orlandofilho04/dns:latest -f dockerfile.dns ." para iniciar a criação do container DNS.
+5. Execute o comando "sudo docker build -t orlandofilho04/firewall:latest -f dockerfile.firewall ." para iniciar a criação do container FIREWALL.
+6. Após a criação do container DHCP, digite "sudo docker run -u root -d --name dhcp orlandofilho04/dhcp" para iniciar a execução do container DHCP.
+7. Após a criação do container DNS, digite "sudo docker run -u root -d --name dns orlandofilho04/dns" para iniciar a execução do container DNS.
+8. Após a criação do container FIREWALL, digite "sudo docker run -u root -d --name firewall orlandofilho04/firewall" para iniciar a execução do container FIREWALL.
+9. Se necessário adentrar no container em execução use "sudo docker exec -it (dhcp/dns/firewall) /bin/bash", apenas usando um das três opções dos nomes atribuidos em cada um dos containers.
+10. Se necessário parar a execução do container "sudo docker stop (dhcp/dns/firewall)", apenas usando um das três opções dos nomes atribuidos em cada um dos containers.
 
-## Configuração de Rede
+## Funcionamento
 
-1. sevidor-web-vm
-   - IP Privado Estático (192.168.56.15)
-   - DNS
-     - 8.8.8.8
-   - Atribuição do IP privado estático (192.168.56.14) como Gateway padrão da rede.
-2. servidor-bd-vm
-   - IP Privado Estático (192.168.56.16)
-   - DNS
-     - 8.8.8.8
-   - Atribuição do IP privado estático (192.168.56.14) como Gateway padrão da rede.
-3. gateway-vm
-   - IP Privado Estático (192.168.56.14)
-   - IP Público DHCP - bridge com a interface de rede externa.
-   - IP Privado Estático - adicionado a mesma interface de rede do IP público DHCP.
-   - Gateway e DNS padrão da rede (sem alterações).
-   - Liberação de portas para tráfego de pacotes entre as redes.
-   - NAT da interface de rede externa mascarado na interface de rede interna.
+- Container DHCP. O container foi configurado com um arquivo chamado "dhcp.conf", o qual contém as configurações necessárias para o serviço DHCP. Para seu funcionamento também foi aberta a porta 67/UDP no container, permitindo que o servidor DHCP atribua endereços IP a novos dispositivos que se conectem à rede por meio dessa porta.
 
-## Provisionamento
+- Container DNS. O container foi configurado com um arquivo chamado "named.conf.options", o qual contém as configurações necessárias para o serviço DNS. Para seu funcionamento também foi aberta a porta 53 TCP/UDP, afim de realizar a resolução dos nomes na rede.
 
-Os scripts de provisionamento de cada VM está localizado na parte SHELL no próprio arquivo "vagrantfile". Cada script executa as configurações e a instalação dos serviços necessários para cada VM funcionar conforme sua função. Estão dispostos no arquivo "vagrantfile", pois em sala de aula, me falou para fazer assim.
+- Container FIREWALL. O container foi configurado com um arquivo chamado "firewall_rules.sh", o qual contém as configurações necessárias para o serviço FIREWALL. Seu funcionamento consiste em bloquear o acesso de todas as portas e liberando somente para as portas DHCP e DNS liberadas nos containers anteriores.
 
-1. sevidor-web-vm - Servidor Web
-   - Instalação do apache.
-2. servidor-bd-vm - Servidor de Banco de Dados
-   - Instalação do mysql-server.
-3. gateway-vm - Gateway
-   - Configura-o como Gateway padrão da rede.
+## Testes
 
-## Acesso à Internet
+- DHCP:
 
-Por meio da conexão à internet recebida por bridge ao DHCP da gateway-vm, a interface de rede interna da gateway-vm recebe essa conexão e atribui ela ao seu IP privado estático, que por sua vez está na mesma faixa dos IPs das VMs sevidor-web-vm e servidor-bd-vm, cada uma dessas VMs estão configuradas com IP da gateway-vm atuando como Gateway padrão da rede, assim as VMs sevidor-web-vm e servidor-bd-vm dependem da gateway-vm para terem acesso à internet.
+  - Para testar o funcionamento do servidor DHCP, basta conectar um novo dispositivo à rede e verificar se ele recebe um endereço IP automaticamente. Isso pode ser feito por meio do comando "ip a" no terminal do dispositivo.
+  - Ou, adentrar o container DHCP e verificar se os endereços estão sendo atribuídos. Com o seguinte comando "tail -f /var/log/dhcpd.log", deve retornar os endereços atribuídos.
+
+- DNS:
+
+  - Para testar o funcionamento do servidor DNS, basta tentar acessar um site por meio de seu nome, em vez de seu endereço IP. Isso pode ser feito por meio do comando "ping" no terminal do dispositivo.
+  - Ou, adentrar o container DNS e verificar se os endereços estão sendo resolvidos. Com o seguinte comando "tail -f /var/log/named/named.log", deve retornar os endereços resolvidos.
+  - Ou, adentrar o container DNS e verificar se os nomes estão resolvidos. Com o seguinte comando "dig www.example.com". Assim com algum site em espeiífico, deve retornar o ip relacionado a esse endereço.
+
+- FIREWALL:
+  - Para testar o funcionamento do FIREWALL, basta tentar acessar um site por meio de seu nome, em vez de seu endereço IP. Isso pode ser feito por meio do comando "ping" no terminal do dispositivo.
+  - Ou, adentrar o container FIREWALL e verificar se as portas estão bloqueadas. Com o seguinte comando "iptables -L", deve retornar as portas bloqueadas e liberadas.
