@@ -1,8 +1,5 @@
 FROM ubuntu:latest
 
-# Define o usuário como root
-USER root
-
 # Instalar firewall
 RUN apt-get update && \
     apt-get install -y iptables && \
@@ -12,9 +9,6 @@ RUN apt-get update && \
     apt-get install -y net-tools && \
     apt-get install -y xtables-addons-common
 
-# Optar pelo legacy
-RUN update-alternatives --set iptables /usr/sbin/iptables-legacy
-
 # Configurar regras do firewall
 COPY ./firewall_rules.sh /root/
 
@@ -22,5 +16,5 @@ COPY ./firewall_rules.sh /root/
 RUN chmod +x /root/firewall_rules.sh
 
 # Executar script de regras do firewall
-CMD sudo ["bash", "/root/firewall_rules.sh"]
+CMD ["bash", "/root/firewall_rules.sh"]
 
