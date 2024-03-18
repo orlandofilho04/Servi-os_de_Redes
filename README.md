@@ -24,11 +24,17 @@ Você foi designado para configurar um ambiente de rede em Docker para uma empre
 3. Execute o comando "sudo docker build -t orlandofilho04/dhcp:latest -f dockerfile.dhcp ." para iniciar a criação do container DHCP.
 4. Execute o comando "sudo docker build -t orlandofilho04/dns:latest -f dockerfile.dns ." para iniciar a criação do container DNS.
 5. Execute o comando "sudo docker build -t orlandofilho04/firewall:latest -f dockerfile.firewall ." para iniciar a criação do container FIREWALL.
-6. Após a criação do container DHCP, digite "sudo docker run -u root -d --name dhcp orlandofilho04/dhcp" para iniciar a execução do container DHCP.
-7. Após a criação do container DNS, digite "sudo docker run -u root -d --name dns orlandofilho04/dns" para iniciar a execução do container DNS.
-8. Após a criação do container FIREWALL, digite "sudo docker run -u root -d --name firewall orlandofilho04/firewall" para iniciar a execução do container FIREWALL.
+6. Após a criação do container DHCP, digite "sudo docker run -d --net rede --name dhcp orlandofilho04/dhcp" para iniciar a execução do container DHCP.
+7. Após a criação do container DNS, digite "sudo docker run -d --net rede --name dns orlandofilho04/dns" para iniciar a execução do container DNS.
+8. Após a criação do container FIREWALL, digite "sudo docker run -d --privileged --net rede --name firewall orlandofilho04/firewall" para iniciar a execução do container FIREWALL.
 9. Se necessário adentrar no container em execução use "sudo docker exec -it (dhcp/dns/firewall) /bin/bash", apenas usando um das três opções dos nomes atribuidos em cada um dos containers.
 10. Se necessário parar a execução do container "sudo docker stop (dhcp/dns/firewall)", apenas usando um das três opções dos nomes atribuidos em cada um dos containers.
+
+## Rede
+
+- A rede foi configurada com o nome "rede" e o endereço "192.168.0.0/24", com o comando "sudo docker network create --subnet=192.168.0.0/24 rede".
+
+- Então para se deve usar o "--net rede" para cada container, para que eles possam se comunicar entre si, na mesma rede. Como mostrado acima, na aba de instrução de uso.
 
 ## Funcionamento
 
