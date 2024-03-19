@@ -26,7 +26,8 @@ Você foi designado para configurar um ambiente de rede em Docker para uma empre
 5. Execute o comando "sudo docker build -t orlandofilho04/firewall:latest -f dockerfile.firewall ." para iniciar a criação do container FIREWALL.
 6. Após a criação do container DHCP, digite "sudo docker run -d --net rede --name dhcp orlandofilho04/dhcp" para iniciar a execução do container DHCP.
 7. Após a criação do container DNS, digite "sudo docker run -d --net rede --name dns orlandofilho04/dns" para iniciar a execução do container DNS.
-8. Após a criação do container FIREWALL, digite "sudo docker run -d --privileged --net rede --name firewall orlandofilho04/firewall" para iniciar a execução do container FIREWALL.
+8. Após a criação do container FIREWALL, digite "sudo docker run -d --name firewall --restart always --net rede --privileged orlandofilho04/firewall
+" para iniciar a execução do container FIREWALL.
 9. Se necessário adentrar no container em execução use "sudo docker exec -it (dhcp/dns/firewall) /bin/bash", apenas usando um das três opções dos nomes atribuidos em cada um dos containers.
 10. Se necessário parar a execução do container "sudo docker stop (dhcp/dns/firewall)", apenas usando um das três opções dos nomes atribuidos em cada um dos containers.
 
@@ -38,7 +39,7 @@ Você foi designado para configurar um ambiente de rede em Docker para uma empre
 
 ## Funcionamento
 
-- Container DHCP. O container foi configurado com um arquivo chamado "dhcp.conf", o qual contém as configurações necessárias para o serviço DHCP. Para seu funcionamento também foi aberta a porta 67/UDP no container, permitindo que o servidor DHCP atribua endereços IP a novos dispositivos que se conectem à rede por meio dessa porta.
+- Container DHCP. O container foi configurado com um arquivo chamado "dhcp.conf", o qual contém as configurações necessárias para o serviço DHCP. Para seu funcionamento também foi aberta a porta 67/UDP no container, permitindo que o servidor DHCP atribua endereços IP a novos dispositivos que se conectem à rede por meio dessa porta, foi separado a faixa da rede 192.168.1.100 a 192.168.1.200 para se atribuir aos demais containers.
 
 - Container DNS. O container foi configurado com um arquivo chamado "named.conf.options", o qual contém as configurações necessárias para o serviço DNS. Para seu funcionamento também foi aberta a porta 53 TCP/UDP, afim de realizar a resolução dos nomes na rede.
 
@@ -50,6 +51,7 @@ Você foi designado para configurar um ambiente de rede em Docker para uma empre
 
   - Para testar o funcionamento do servidor DHCP, basta conectar um novo dispositivo à rede e verificar se ele recebe um endereço IP automaticamente. Isso pode ser feito por meio do comando "ip a" no terminal do dispositivo.
   - Ou, adentrar o container DHCP e verificar se os endereços estão sendo atribuídos. Com o seguinte comando "tail -f /var/log/dhcpd.log", deve retornar os endereços atribuídos.
+  - E por fim a melhor maneira de se testar, conferir se o ip dos outros containers ficaram corretos. Para isso se deve entrar nos containers "dns" ou "firewall" e verificar se o ip atribuido foi colocado de forma correta e esteja dentro da faixa de ip determinada (192.168.1.100 a 192.168.1.200).
 
 - DNS:
 
@@ -59,4 +61,4 @@ Você foi designado para configurar um ambiente de rede em Docker para uma empre
 
 - FIREWALL:
   - Para testar o funcionamento do FIREWALL, basta tentar acessar um site por meio de seu nome, em vez de seu endereço IP. Isso pode ser feito por meio do comando "ping" no terminal do dispositivo.
-  - Ou, adentrar o container FIREWALL e verificar se as portas estão bloqueadas. Com o seguinte comando "iptables -L", deve retornar as portas bloqueadas e liberadas.
+  - Ou, adentrar o container FIREWALL e verificar se as portas estão bloqueadas. Com o seguinte comando "iptables -L", deve retornar as portas bloqueadas e liberadas. E o retorno deve ser apenas a visualização das das portas liberadas, ou seja, as portas do container "dns" e "dhcp", sendo elas 53 e 67:68 respectivamente.
