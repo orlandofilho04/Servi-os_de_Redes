@@ -32,7 +32,7 @@ Você foi designado para configurar um ambiente de rede em Docker para uma empre
 
 ## Rede
 
-- A rede foi configurada com o nome "rede" e o endereço "192.168.0.0/24", com o comando "sudo docker network create --subnet=192.168.0.0/24 rede".
+- A rede foi configurada com o nome "rede" e o endereço "192.168.1.0/24", com o comando "sudo docker network create --subnet=192.168.1.0/24 rede".
 
 - Então para se deve usar o "--net rede" para cada container, para que eles possam se comunicar entre si, na mesma rede. Como mostrado acima, na aba de instrução de uso.
 
