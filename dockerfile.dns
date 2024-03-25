@@ -2,7 +2,9 @@ FROM ubuntu:latest
 
 # Instalar servidor DNS
 RUN apt-get update && \
-    apt-get install -y bind9
+    apt-get install -y bind9 && \
+    apt-get install -y dnsutils && \
+    apt-get install -y net-tools
 
 # Configurar o servidor DNS
 COPY ./named.conf.options /etc/bind/named.conf.options

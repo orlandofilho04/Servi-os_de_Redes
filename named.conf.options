@@ -1,4 +1,4 @@
-# nano named.conf.options
+#nano named.conf.options
 
 options {
     directory "/var/cache/bind";

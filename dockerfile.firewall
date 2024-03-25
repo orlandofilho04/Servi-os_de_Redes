@@ -1,20 +1,17 @@
 FROM ubuntu:latest
 
-# Instalar firewall
+# Instalar servidor de firewall
 RUN apt-get update && \
     apt-get install -y iptables && \
-    apt-get install -y iptables-persistent && \
-    apt-get install -y iputils-ping && \
-    apt-get install -y conntrack && \
+    apt-get install -y dnsutils && \
     apt-get install -y net-tools && \
-    apt-get install -y xtables-addons-common
+    apt install -y telnet
 
-# Configurar regras do firewall
-COPY ./firewall_rules.sh /root/
+# Copiar o script de firewall
+COPY ./firewall_rules.sh /root/firewall_rules.sh
 
-# Definindo o script de configuração do firewall como executável
-RUN chmod +x /root/firewall_rules.sh
+# Definir o script de firewall como executável
+RUN chmod 755 /root/firewall_rules.sh
 
-# Executar script de regras do firewall
-CMD ["bash", "/root/firewall_rules.sh"]
-
+# Exemplo de regra de firewall
+CMD ["/bin/bash", "-c", "/root/firewall_rules.sh; sleep infinity"]
