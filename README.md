@@ -23,6 +23,10 @@ Você foi designado para configurar um ambiente de rede em Docker para uma empre
 
 - Então para se deve usar o "--net rede" para cada container, para que eles possam se comunicar entre si, na mesma rede. Como mostrado acima, na aba de instrução de uso.
 
+- Para verificar se a rede foi criada use o comando "sudo docker network ls".
+
+- ![rede](imgs/rede.png) <br> Mostra a rede criada.
+
 ## Instruções de Uso
 
 1. Clone o repositório do Github.
@@ -52,6 +56,7 @@ Você foi designado para configurar um ambiente de rede em Docker para uma empre
   - Ou, adentrar o container DHCP e verificar se os endereços estão sendo atribuídos. Com o seguinte comando "tail -f /var/log/dhcpd.log", deve retornar os endereços atribuídos.
   - E por fim a melhor maneira de se testar, conferir se o ip dos outros containers ficaram corretos. Para isso se deve entrar nos containers "dns" ou "firewall" e verificar se o ip atribuido foi colocado de forma correta e esteja dentro da faixa de ip determinada (192.168.1.100 a 192.168.1.200).
   - ![ip_dns](imgs/ip_dns.png) <br> Mostra o ip configurado do container DNS.
+
   - ![ip_firewall](imgs/ip_firewall.png) <br> Mostra o ip configurado do container FIREWALL.
 
 - DNS:
@@ -62,7 +67,9 @@ Você foi designado para configurar um ambiente de rede em Docker para uma empre
   - ![teste_dns](imgs/teste_dns.png) <br> Mostra o site com o nome resolvido pelo DNS.
 
 - FIREWALL:
+
   - Para testar o funcionamento do FIREWALL, basta tentar acessar um site por meio de seu nome, em vez de seu endereço IP. Isso pode ser feito por meio do comando "ping" no terminal do dispositivo.
   - Ou, adentrar o container FIREWALL e verificar se as portas estão bloqueadas. Com o seguinte comando "iptables -L", deve retornar as portas bloqueadas e liberadas. E o retorno deve ser apenas a visualização das das portas liberadas, ou seja, as portas do container "dns" e "dhcp", sendo elas 53 e 67:68 respectivamente.
   - ![firewall_no_dns](imgs/firewall_no_dns.png) <br> Mostra que a porta 53 está liberada no FIREWALL.
+
   - ![firewall_portas_liberadas](imgs/firewall_portas_liberadas.png) <br> Mostra quais as portas estão liberadas no FIREWALL.
