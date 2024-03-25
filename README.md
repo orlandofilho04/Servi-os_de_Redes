@@ -51,13 +51,18 @@ Você foi designado para configurar um ambiente de rede em Docker para uma empre
   - Para testar o funcionamento do servidor DHCP, basta conectar um novo dispositivo à rede e verificar se ele recebe um endereço IP automaticamente. Isso pode ser feito por meio do comando "ip a" no terminal do dispositivo.
   - Ou, adentrar o container DHCP e verificar se os endereços estão sendo atribuídos. Com o seguinte comando "tail -f /var/log/dhcpd.log", deve retornar os endereços atribuídos.
   - E por fim a melhor maneira de se testar, conferir se o ip dos outros containers ficaram corretos. Para isso se deve entrar nos containers "dns" ou "firewall" e verificar se o ip atribuido foi colocado de forma correta e esteja dentro da faixa de ip determinada (192.168.1.100 a 192.168.1.200).
+  - ![ip_dns](imgs/ip_dns.png) <br> Mostra o ip configurado do container DNS.
+  - ![ip_firewall](imgs/ip_firewall.png) <br> Mostra o ip configurado do container FIREWALL.
 
 - DNS:
 
   - Para testar o funcionamento do servidor DNS, basta tentar acessar um site por meio de seu nome, em vez de seu endereço IP. Isso pode ser feito por meio do comando "ping" no terminal do dispositivo.
   - Ou, adentrar o container DNS e verificar se os endereços estão sendo resolvidos. Com o seguinte comando "tail -f /var/log/named/named.log", deve retornar os endereços resolvidos.
   - Ou, adentrar o container DNS e verificar se os nomes estão resolvidos. Com o seguinte comando "dig www.example.com". Assim com algum site em espeiífico, deve retornar o ip relacionado a esse endereço.
+  - ![teste_dns](imgs/teste_dns.png) <br> Mostra o site com o nome resolvido pelo DNS.
 
 - FIREWALL:
   - Para testar o funcionamento do FIREWALL, basta tentar acessar um site por meio de seu nome, em vez de seu endereço IP. Isso pode ser feito por meio do comando "ping" no terminal do dispositivo.
   - Ou, adentrar o container FIREWALL e verificar se as portas estão bloqueadas. Com o seguinte comando "iptables -L", deve retornar as portas bloqueadas e liberadas. E o retorno deve ser apenas a visualização das das portas liberadas, ou seja, as portas do container "dns" e "dhcp", sendo elas 53 e 67:68 respectivamente.
+  - ![firewall_no_dns](imgs/firewall_no_dns.png) <br> Mostra que a porta 53 está liberada no FIREWALL.
+  - ![firewall_portas_liberadas](imgs/firewall_portas_liberadas.png) <br> Mostra quais as portas estão liberadas no FIREWALL.
